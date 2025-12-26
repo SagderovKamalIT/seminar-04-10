@@ -1,12 +1,9 @@
-import Stopwatch from "./components/StopWatch";
-
-
-
 function App() {
   return (
-    <>
-    <Stopwatch />
-    </>
+    <div>
+      <h1>Главная страница приложения</h1>
+      <p>Это компонент App, который отображается через маршрутизацию.</p>
+    </div>
   );
 }
 

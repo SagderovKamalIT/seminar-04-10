@@ -1,13 +1,12 @@
-import Stopwatch from "./components/StopWatch";
+import TodoList from './components/TodoList';
+import './App.css';
 
-
-
-function App() {
+const App = () => {
   return (
-    <>
-    <Stopwatch />
-    </>
+    <div className="App">
+      <TodoList />
+    </div>
   );
-}
+};
 
 export default App;

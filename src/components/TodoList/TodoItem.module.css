@@ -1,0 +1,44 @@
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.listItem:hover {
+  background-color: #f9f9f9;
+}
+
+.listItem:last-child {
+  border-bottom: none;
+}
+
+.todoText {
+  font-size: 16px;
+  color: #333;
+  flex-grow: 1;
+}
+
+.deleteButton {
+  padding: 6px 12px;
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  margin-left: 10px;
+  min-width: 70px;
+}
+
+.deleteButton:hover {
+  background-color: #ffcdd2;
+  transform: translateY(-1px);
+}
+
+.deleteButton:active {
+  transform: translateY(0);
+}

@@ -1,0 +1,33 @@
+import { useState, useCallback } from 'react';
+
+interface UseCounterReturn {
+  count: number;
+  increment: () => void;
+  decrement: () => void;
+  reset: () => void;
+}
+
+const useCounter = (initialValue: number = 0): UseCounterReturn => {
+  const [count, setCount] = useState(initialValue);
+
+  const increment = useCallback(() => {
+    setCount(prevCount => prevCount + 1);
+  }, []);
+
+  const decrement = useCallback(() => {
+    setCount(prevCount => prevCount - 1);
+  }, []);
+
+  const reset = useCallback(() => {
+    setCount(initialValue);
+  }, [initialValue]);
+
+  return {
+    count,
+    increment,
+    decrement,
+    reset
+  };
+};
+
+export default useCounter;

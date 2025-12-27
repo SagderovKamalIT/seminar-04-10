@@ -1,11 +1,11 @@
-import Stopwatch from "./components/StopWatch";
+import WeatherWidget from "./components/WeatherWidget";
 
 
 
 function App() {
   return (
     <>
-    <Stopwatch />
+    <WeatherWidget />
     </>
   );
 }

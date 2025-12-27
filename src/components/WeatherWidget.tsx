@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Alert,
   Box,
+  Button,
 } from "@mui/material";
 
 interface WeatherData {
@@ -22,38 +23,49 @@ interface WeatherData {
 }
 
 function WeatherWidget() {
-  const [data, setData] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetch(
-      "https://api.weatherapi.com/v1/current.json?key=a721a80956cf4029abc211807250606&q=Moscow&aqi=no"
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP_${res.status}`);
+  const { data, isLoading, isError } = useQuery<WeatherData>({
+    queryKey: ["weather"],
+    queryFn: async () => {
+      const res = await fetch(
+        "https://api.weatherapi.com/v1/current.json?key=a721a80956cf4029abc211807250606&q=Moscow&aqi=no"
+      );
+
+      if (!res.ok) {
+        throw new Error("HTTP_ERROR");
+      }
+
+      return res.json();
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
         }
-        return res.json();
-      })
-      .then((data: WeatherData) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        let message =
-          "Не удалось загрузить погоду. Проверьте интернет-соединение.";
+      );
 
-        if (err.message.startsWith("HTTP_")) {
-          message = "Сервер не отвечает. Попробуйте позже.";
-        }
+      if (!res.ok) {
+        throw new Error("POST_ERROR");
+      }
 
-        setError(message);
-        setLoading(false);
-      });
-  }, []);
+      return res.json();
+    },
+    onSuccess: () => {
+     
+      queryClient.invalidateQueries({ queryKey: ["weather"] });
+    },
+  });
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Box display="flex" justifyContent="center" mt={4}>
         <CircularProgress />
@@ -62,10 +74,12 @@ function WeatherWidget() {
   }
 
 
-  if (error) {
+  if (isError) {
     return (
       <Box mt={4}>
-        <Alert severity="error">{error}</Alert>
+        <Alert severity="error">
+          Не удалось загрузить погоду. Попробуйте позже.
+        </Alert>
       </Box>
     );
   }
@@ -88,6 +102,18 @@ function WeatherWidget() {
         <Typography mt={1}>
           {data!.current.condition.text}
         </Typography>
+
+
+        <Box mt={3}>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => mutation.mutate()}
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? "Отправка..." : "Обновить данные"}
+          </Button>
+        </Box>
       </CardContent>
     </Card>
   );
